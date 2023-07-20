@@ -1,0 +1,37 @@
+import openmc
+
+castBronze = openmc.Material(1, "castBronze")
+castBronze.add_nuclide("Cu63", 0.615435)
+castBronze.add_nuclide("Cu65", 0.274565)
+castBronze.add_nuclide("Sn112", 0.001067)
+castBronze.add_nuclide("Sn114", 0.000726)
+castBronze.add_nuclide("Sn115", 0.000374)
+castBronze.add_nuclide("Sn116", 0.015994)
+castBronze.add_nuclide("Sn117", 0.008448)
+castBronze.add_nuclide("Sn118", 0.026642)
+castBronze.add_nuclide("Sn119", 0.009449)
+castBronze.add_nuclide("Sn120", 0.035838)
+castBronze.add_nuclide("Sn122", 0.005093)
+castBronze.add_nuclide("Sn124", 0.006369)
+castBronze.temperature = 293 #K
+castBronze.set_density("g/cm3", 8.77)
+
+mats = openmc.Materials([castBronze])
+mats.export_to_xml()
+
+dag_univ = openmc.DAGMCUniverse(filename='dagmc.h5m')
+geometry = openmc.Geometry(dag_univ)
+geometry.export_to_xml()
+
+point = openmc.stats.Point((0,0,0))
+src = openmc.Source(space=point)
+
+settings = openmc.settings
+settings.source = src
+settings.batches = 120
+settings.inactive = 20
+settings.particles = 10000
+settings.temperature = {"method": "interpolation"}
+settings.export_to_xml()
+
+openmc.run()
