@@ -45,7 +45,6 @@ box = openmc.rectangular_prism(width=10, height=10, boundary_type='vacuum')
 air_region = box & +cylinderSurface & +upperSurface & -lowerSurface
 air = openmc.Cell(name='air')
 air.fill = oxygen
-air.region = air_region
 print(air)
 
 # Create a geometry and export to XML
