@@ -2,9 +2,20 @@
 import openmc
 import os
 
+# MATERIALS
 castBronze = openmc.Material(1, "castBronze")
-castBronze.add_element("Cu", 0.89)
-castBronze.add_element("Sn", 0.11)
+castBronze.add_nuclide("Cu63", 0.615435)
+castBronze.add_nuclide("Cu65", 0.274565)
+castBronze.add_nuclide("Sn112", 0.001067)
+castBronze.add_nuclide("Sn114", 0.000726)
+castBronze.add_nuclide("Sn115", 0.000374)
+castBronze.add_nuclide("Sn116", 0.015994)
+castBronze.add_nuclide("Sn117", 0.008448)
+castBronze.add_nuclide("Sn118", 0.026642)
+castBronze.add_nuclide("Sn119", 0.009449)
+castBronze.add_nuclide("Sn120", 0.035838)
+castBronze.add_nuclide("Sn122", 0.005093)
+castBronze.add_nuclide("Sn124", 0.006369)
 castBronze.temperature = 293 #K
 castBronze.set_density("g/cm3", 8.77)
 
@@ -12,11 +23,9 @@ oxygen = openmc.Material(2, "oxygen")
 oxygen.set_density("g/cm3", 8.77)
 oxygen.add_element('O', 2.0)
 oxygen.temperature = 293 #K
-
-mats = openmc.Materials([castBronze])
+    
+mats = openmc.Materials([castBronze, oxygen])
 mats.export_to_xml()
-
-print(mats)
 
 # GEOMETRY
 #Making cylinder
@@ -26,7 +35,6 @@ lowerSurface = openmc.XPlane(x0=1)
 
 #Converting into regions
 cylinderInside = -cylinderSurface & -upperSurface & +lowerSurface
-
 
 # Create cells, mapping materials to cells
 cylinder = openmc.Cell(name='cylinder')
@@ -41,15 +49,15 @@ air.region = air_region
 print(air)
 
 # Create a geometry and export to XML
-root_universe = openmc.Universe(cells=[cylinder, air])
+root_universe = openmc.Universe()
+root_universe.add_cells([cylinder, air])
 geom = openmc.Geometry(root_universe)                    
 geom.export_to_xml()  
 
 root_universe.plot(width=(5,5))
 root_universe.plot(width=(5,5), basis='yz')
 
-
-
+# SETTINGS
 settings = openmc.Settings()
 settings.particles = 10000
 settings.batches = 10
@@ -62,8 +70,7 @@ settings.source = source
 settings.run_mode = 'fixed source'
 settings.export_to_xml()
 
-
-
+# TALLIES
 cell_filter = openmc.CellFilter([cylinder])
 tally = openmc.Tally(name="Neutron Flux")
 tally.filters = [cell_filter]
