@@ -2,12 +2,16 @@
 import openmc
 import os
 
-
 castBronze = openmc.Material(1, "castBronze")
 castBronze.add_element("Cu", 0.89)
 castBronze.add_element("Sn", 0.11)
 castBronze.temperature = 293 #K
 castBronze.set_density("g/cm3", 8.77)
+
+oxygen = openmc.Material(2, "oxygen")
+oxygen.set_density("g/cm3", 8.77)
+oxygen.add_element('O', 2.0)
+oxygen.temperature = 293 #K
 
 mats = openmc.Materials([castBronze])
 mats.export_to_xml()
