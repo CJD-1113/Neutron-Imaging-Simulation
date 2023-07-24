@@ -18,8 +18,6 @@ mats.export_to_xml()
 
 print(mats)
 
-
-
 # GEOMETRY
 #Making cylinder
 cylinderSurface = openmc.XCylinder(r=1.2)
@@ -38,7 +36,9 @@ cylinder.region = cylinderInside
 box = openmc.rectangular_prism(width=10, height=10, boundary_type='vacuum')
 air_region = box & +cylinderSurface & +upperSurface & -lowerSurface
 air = openmc.Cell(name='air')
+air.fill = oxygen
 air.region = air_region
+print(air)
 
 # Create a geometry and export to XML
 root_universe = openmc.Universe(cells=[cylinder, air])
