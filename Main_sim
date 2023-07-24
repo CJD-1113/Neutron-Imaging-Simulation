@@ -1,8 +1,11 @@
 %matplotlib inline
 import openmc
 import os
+from IPython.display import Image
+import numpy as np
+import matplotlib.pyplot as plt
 
-# MATERIALS
+# Materials
 castBronze = openmc.Material(1, "castBronze")
 castBronze.add_nuclide("Cu63", 0.615435)
 castBronze.add_nuclide("Cu65", 0.274565)
@@ -55,7 +58,6 @@ geom.export_to_xml()
 
 root_universe.plot(width=(5,5))
 root_universe.plot(width=(5,5), basis='yz')
-
 # SETTINGS
 settings = openmc.Settings()
 settings.particles = 10000
