@@ -1,71 +1,95 @@
 %matplotlib inline
 import openmc
 import os
-
-#Materials
-#Iniatilizing Cast Bronze Material
+import openmc_source_plotter
 castBronze = openmc.Material(1, "castBronze")
 castBronze.add_element("Cu", 0.89)
 castBronze.add_element("Sn", 0.11)
 castBronze.temperature = 293 #K
 castBronze.set_density("g/cm3", 8.77)
-
-#Initializing Nitrogen Material
+​
 nitrogen = openmc.Material(2, "nitrogen")
 nitrogen.set_density("g/cm3", 0.0012506)
 nitrogen.add_element('N', 2.0)
 nitrogen.temperature = 293 #K
-
-#Exporting
-mats = openmc.Materials([castBronze, nitrogen])
-mats.export_to_xml()
+​
+oxygen = openmc.Material(3, "oxygen")
+oxygen.set_density("g/cm3", 0.001429)
+oxygen.add_element('O', 2.0)
+oxygen.temperature = 293 #K
+​
+argon = openmc.Material(4, "argon")
+argon.set_density("g/cm3", 0.0017837)
+argon.add_element('Ar', 1.0)
+argon.temperature = 293 #K
+​
+CO2 = openmc.Material(5, "CO2")
+CO2.set_density("g/cm3", 0.001976)
+CO2.add_element('C', 1.0)
+CO2.add_element('O', 2)
+CO2.temperature = 293 #K
+​
+airmix = openmc.Material.mix_materials([nitrogen, oxygen, argon, CO2], [0.7808, 0.2095, 0.0093, 0.0004], 'ao')
+mats = openmc.Materials([castBronze, nitrogen, oxygen, argon, CO2, airmix])
 print(mats)
+mats.export_to_xml()
+​
+
+
+
 
 # GEOMETRY
-#Making cylinder surfaces
-cylinderSurface = openmc.XCylinder(r=1.2)
-upperSurface = openmc.XPlane(x0=2)
-lowerSurface = openmc.XPlane(x0=1)
+#Making cylinder
+cylinderSurface = openmc.XCylinder(r=1.2, boundary_type='transmission')
+upperSurface = openmc.XPlane(x0=21, boundary_type='transmission')
+lowerSurface = openmc.XPlane(x0=20, boundary_type='transmission')
 
-#Converting into region
 cylinderInside = -cylinderSurface & -upperSurface & +lowerSurface
-cylinderInside.boundary_type = "transmission"
+
+
 
 # Create cells, mapping materials to cells
 cylinder = openmc.Cell(name='cylinder')
 cylinder.fill = castBronze
 cylinder.region = cylinderInside
 
-#Creating box region and filling
-box = openmc.rectangular_prism(width=10, height=10, boundary_type='vacuum')
-air_region = box & +cylinderSurface & +upperSurface & -lowerSurface
+box = openmc.rectangular_prism(width=60, height=60, boundary_type='vacuum')
+air_region = ~ cylinderInside & box
 air = openmc.Cell(name='air')
-air.fill = nitrogen
+air.fill = airmix
+air.region = air_region
 
-#Create universe and exporting
+# Create a geometry and export to XML
 root_universe = openmc.Universe(cells=[cylinder, air])
 geom = openmc.Geometry(root_universe)                    
 geom.export_to_xml()  
 
-#Graphing 2d geometry
-root_universe.plot(width=(20,20))
-root_universe.plot(width=(20,20), basis='yz')
+root_universe.plot(width=(60,60))
+root_universe.plot(width=(60,60), basis='yz')
 
-#SETTINGS
+
+
+
 settings = openmc.Settings()
 settings.particles = 10000
 settings.batches = 10
 settings.inactive = 0
 
 source = openmc.Source()
-source.space = openmc.stats.Point()
+source.space = openmc.stats.Box((-0.0000000001, -2, -2), (0, 2, 2))
 source.angle = openmc.stats.Monodirectional()
+source.strength = 1
 settings.source = source
+
 settings.run_mode = 'fixed source'
+
 settings.export_to_xml()
 
-#TALLIES
+
+
+
 cell_filter = openmc.CellFilter([cylinder])
+# energy_filter = openmc.EnergyFilter([0.01, 0.3])
 tally = openmc.Tally(name="Neutron Flux")
 tally.filters = [cell_filter]
 
@@ -76,3 +100,8 @@ tallies.export_to_xml()
 
 model=openmc.model.Model(geom, mats, settings, tallies)
 openmc.run()
+
+
+
+
+!cat tallies.out
