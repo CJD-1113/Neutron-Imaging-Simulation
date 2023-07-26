@@ -77,8 +77,7 @@ settings.particles = 10000
 settings.batches = 10
 settings.inactive = 0
 
-# source = openmc.Source()
-#  source.space = openmc.stats.Box((-0.0000000001, -2, -2), (0, 2, 2))
+
 pi = math.pi
 r = openmc.stats.PowerLaw(0.0, 2, 1.0)
 phi = openmc.stats.Uniform(0.0, 2*pi)
@@ -110,3 +109,6 @@ tallies.export_to_xml()
 
 model=openmc.model.Model(geom, mats, settings, tallies)
 openmc.run()
+
+
+!cat tallies.out
