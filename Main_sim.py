@@ -33,7 +33,6 @@ CO2.temperature = 293 #K
 
 airmix = openmc.Material.mix_materials([nitrogen, oxygen, argon, CO2], [0.7808, 0.2095, 0.0093, 0.0004], 'ao')
 mats = openmc.Materials([castBronze, nitrogen, oxygen, argon, CO2, airmix])
-print(mats)
 mats.export_to_xml()
 
 
@@ -55,8 +54,27 @@ cylinder = openmc.Cell(name='cylinder')
 cylinder.fill = castBronze
 cylinder.region = cylinderInside
 
-box = openmc.rectangular_prism(width=60, height=60, boundary_type='vacuum')
-air_region = ~ cylinderInside & box
+"""
+planeFront = openmc.ZPlane(z0=0, boundary_type='vacuum')
+planeBoundary = openmc.ZPlane(z0=25, boundary_type='vacuum')
+planeTop = openmc.XPlane(x0=2, boundary_type='vacuum')
+planeBottom = openmc.XPlane(x0=-1, boundary_type='vacuum')
+planeRight = openmc.YPlane(y0=2, boundary_type='vacuum')
+planeLeft = openmc.YPlane(y0=-1, boundary_type='vacuum')
+
+air_region = -planeFront & +planeBoundary & -planeTop & +planeBottom & +planeRight & -planeLeft
+air = openmc.Cell(name='air')
+air.fill = airmix
+air.region = air_region
+"""
+xmin = openmc.XPlane(-60.0, boundary_type='vacuum')
+xmax = openmc.XPlane(60.0, boundary_type='vacuum')
+ymin = openmc.YPlane(-60.0, boundary_type='vacuum')
+ymax = openmc.YPlane(60.0, boundary_type='vacuum')
+zmin = openmc.ZPlane(-60.0, boundary_type='vacuum')
+zmax = openmc.ZPlane(60.0, boundary_type='vacuum')
+box = +xmin & -xmax & +ymin & -ymax & +zmin & -zmax
+air_region = ~cylinderInside & box
 air = openmc.Cell(name='air')
 air.fill = airmix
 air.region = air_region
@@ -66,8 +84,8 @@ root_universe = openmc.Universe(cells=[cylinder, air])
 geom = openmc.Geometry(root_universe)                    
 geom.export_to_xml()  
 
-root_universe.plot(width=(60,60))
-root_universe.plot(width=(60,60), basis='yz')
+root_universe.plot(width=(30,30))
+root_universe.plot(width=(30,30), basis='yz')
 
 
 
@@ -93,9 +111,6 @@ settings.source = source
 settings.run_mode = 'fixed source'
 
 settings.export_to_xml()
-
-
-
 
 cell_filter = openmc.CellFilter([cylinder])
 # energy_filter = openmc.EnergyFilter([0.01, 0.3])
