@@ -29,10 +29,13 @@ mats = openmc.Materials([castBronze])#, oxygen])
 mats.export_to_xml()
 
 # GEOMETRY
+cylWidth = 1.01092
+cylDiam = 2.51968
+
 #Making cylinder
-cylinderSurface = openmc.XCylinder(r=1.2)
-upperSurface = openmc.XPlane(x0=2)
-lowerSurface = openmc.XPlane(x0=1)
+cylinderSurface = openmc.ZCylinder(r=(cylDiam/2), boundary_type='transmission')
+upperSurface = openmc.ZPlane(z0=(1+cylWidth), boundary_type='transmission')
+lowerSurface = openmc.ZPlane(z0=1, boundary_type='transmission')
 
 #Converting into regions
 cylinderInside = -cylinderSurface & -upperSurface & +lowerSurface
@@ -49,9 +52,8 @@ root_universe = openmc.Universe(cells=[cylinder])
 geom = openmc.Geometry(root_universe)                    
 geom.export_to_xml()  
 
-root_universe.plot(width=(5,5))
-root_universe.plot(width=(5,5), basis='yz')
-
+root_universe.plot(width=(5,5), color_by="cell", colors={cylinder: 'goldenrod', air: 'lightsteelblue'})
+root_universe.plot(width=(5,5), basis='yz', color_by="cell", colors={cylinder: 'goldenrod', air: 'lightsteelblue'})
 """
 #Creating file to be displayed in paraview
 vox_plot = openmc.Plot()
