@@ -3,7 +3,7 @@ import openmc
 import os
 import numpy as np
 
-
+#MATERIALS
 castBronze = openmc.Material(1, "castBronze")
 castBronze.add_element("Cu", 0.90)
 castBronze.add_element("Sn", 0.10)
@@ -36,14 +36,9 @@ mats = openmc.Materials([castBronze, nitrogen, oxygen, argon, CO2, airmix])
 print(mats)
 mats.export_to_xml()
 
-
-
-
-
 # GEOMETRY
 cylWidth = 1.01092
 cylDiam = 2.51968
-
 
 #Making cylinder
 cylinderSurface = openmc.ZCylinder(r=(cylDiam/2), boundary_type='transmission')
@@ -52,21 +47,16 @@ lowerSurface = openmc.ZPlane(z0=20, boundary_type='transmission')
 
 cylinderInside = -cylinderSurface & -upperSurface & +lowerSurface
 
-
-
 # Create cells, mapping materials to cells
 cylinder = openmc.Cell(name='cylinder')
 cylinder.fill = castBronze
 cylinder.region = cylinderInside
-
 
 BtestcylinderSurface = openmc.ZCylinder(r=(cylDiam/2), boundary_type='transmission')
 BtestupperSurface = openmc.ZPlane(z0=20, boundary_type='transmission')
 BtestlowerSurface = openmc.ZPlane(z0=19, boundary_type='transmission')
 
 BtestcylinderInside = -BtestcylinderSurface & -BtestupperSurface & +BtestlowerSurface
-
-
 
 # Create cells, mapping materials to cells
 Btestcylinder = openmc.Cell(name='Btestcylinder')
@@ -79,16 +69,10 @@ TtestlowerSurface = openmc.ZPlane(z0=(20+cylWidth), boundary_type='transmission'
 
 TtestcylinderInside = -TtestcylinderSurface & -TtestupperSurface & +TtestlowerSurface
 
-
-
 # Create cells, mapping materials to cells
 Ttestcylinder = openmc.Cell(name='Ttestcylinder')
 Ttestcylinder.fill = airmix
 Ttestcylinder.region = TtestcylinderInside
-
-
-
-# Create a geometry and export to XML
 
 xmin = openmc.XPlane(-60.0, boundary_type='vacuum')
 xmax = openmc.XPlane(60.0, boundary_type='vacuum')
@@ -107,25 +91,20 @@ root_universe = openmc.Universe(cells=[cylinder, Ttestcylinder, Btestcylinder, a
 geom = openmc.Geometry(root_universe)                    
 geom.export_to_xml()  
 
-root_universe.plot(width=(50,50))
-root_universe.plot(width=(50,50), basis='yz')
+#Graphs Geometry
+root_universe.plot(width=(7,7), basis='yz', origin=(0,0,19), color_by="cell", colors={Ttestcylinder: 'mistyrose', Btestcylinder: 'mistyrose', cylinder: 'goldenrod', air: 'lightsteelblue'})
 
-
-
-
-
+#SETTINGS
 settings = openmc.Settings()
 settings.particles = 10000
 settings.batches = 10
 settings.inactive = 0
-
 
 r = openmc.stats.PowerLaw(0.0, 2, 1.0)
 phi = openmc.stats.Uniform(0.0, 2 * np.pi)
 z = openmc.stats.Discrete([1.0], [0.0])
 spatial_dist = openmc.stats.CylindricalIndependent(r, phi, z)
 source = openmc.Source(space=spatial_dist)
-
 
 source.angle = openmc.stats.Monodirectional([0, 0, 1])
 source.energy = openmc.stats.Discrete([0.025], [1.0])
@@ -136,9 +115,7 @@ settings.run_mode = 'fixed source'
 
 settings.export_to_xml()
 
-
-
-
+#TALLIES
 Ttest_filter = openmc.CellFilter(Ttestcylinder)
 
 Ttest_tally = openmc.Tally(name="flux of Top test cylinder")
