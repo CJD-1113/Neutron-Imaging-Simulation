@@ -11,6 +11,10 @@
 <p> <a href="https://docs.google.com/presentation/d/1aS2Tk0q_RNgFF9MJiBrEFb7-kNawMjXK/edit?usp=sharing&ouid=117361024151859452799&rtpof=true&sd=true"> Link to poster about study </a> </p>
 
 <br>
+<h3> Data Collection </h3>
+<p> <a href="[https://docs.google.com/presentation/d/1aS2Tk0q_RNgFF9MJiBrEFb7-kNawMjXK/edit?usp=sharing&ouid=117361024151859452799&rtpof=true&sd=true](https://docs.google.com/spreadsheets/d/1pRUFHan4_li_N6ImCXn6YYbFTPnX6Yl9GgdqGhgk8qM/edit?usp=sharing)"> Link Google Sheet and all data/calculations </a> </p>
+
+<br>
 <h3> How To Run </h3>
 <p> We used <a href="https://github.com/fusion-energy/neutronics-workshop"> Neutronics Workshop </a> in order to run OpenMC in jupiter notebooks with docker. There are other ways to do this, which are listed <a href="https://docs.openmc.org/en/stable/quickinstall.html"> here on the OpenMC documentation </a> </p>
 
