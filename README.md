@@ -12,7 +12,7 @@
 
 <br>
 <h3> Data Collection </h3>
-<p> <a href="[https://docs.google.com/presentation/d/1aS2Tk0q_RNgFF9MJiBrEFb7-kNawMjXK/edit?usp=sharing&ouid=117361024151859452799&rtpof=true&sd=true](https://docs.google.com/spreadsheets/d/1pRUFHan4_li_N6ImCXn6YYbFTPnX6Yl9GgdqGhgk8qM/edit?usp=sharing)"> Link Google Sheet and all data/calculations </a> </p>
+<p> <a href="https://docs.google.com/spreadsheets/d/1pRUFHan4_li_N6ImCXn6YYbFTPnX6Yl9GgdqGhgk8qM/edit?gid=1472541725#gid=1472541725"> Link to Google Sheet and all data/calculations </a> </p>
 
 <br>
 <h3> How To Run </h3>
